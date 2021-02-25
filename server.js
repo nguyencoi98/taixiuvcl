@@ -266,12 +266,13 @@ function auto()
 	if(ty == "tai")
 	{
 		game.t+=+xu;
+		game.at+=1;
 
 	}
 	else
 	{
 		game.x+=+xu;
-	
+		game.ax+=1;
 	}
 	
 	game.t+=+xu;
@@ -570,7 +571,7 @@ io.sockets.on("connection", function(socket)
 			// Chạy BOT đặt game ///
 			if(game.trangthai == "dangchay")
 			{
-				if(rand(1,3) == 1)
+				if(rand(1,9) == 1)
 				{
 					auto();
 					chanle();
