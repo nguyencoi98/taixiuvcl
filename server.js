@@ -263,21 +263,22 @@ function auto()
 	var xu  = rand(system.ngocrong_min,system.ngocrong_max);
 	var ty = rand(1,18) <=10 ? 'tai' : 'xiu';
 	cuoc.push({id : 0, xu : +xu, type : ty, hoantra : 0, game : 'taixiu' });
+  if(rand(1,6) == 1)
+				{
 	if(ty == "tai")
 	{
 		game.t+=+xu;
-		game.at+=1;
+		game.at++;
 
 	}
 	else
 	{
 		game.x+=+xu;
-		game.ax+=1;
+		game.ax++;
 	}
-	
-	game.t+=+xu;
-	game.x+=+xu;
 
+	
+        }
 	cuoc.push({id : 0, xu : +xu, type : 'tai', hoantra : 0, game : 'taixiu' });
 	cuoc.push({id : 0, xu : +xu, type : 'xiu', hoantra : 0, game : 'taixiu' });
 	console.log('BOT dat '+ty+' : '+xu+' ');
@@ -571,7 +572,7 @@ io.sockets.on("connection", function(socket)
 			// Chạy BOT đặt game ///
 			if(game.trangthai == "dangchay")
 			{
-				if(rand(1,9) == 1)
+				if(rand(1,10) == 1)
 				{
 					auto();
 					chanle();
