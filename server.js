@@ -263,7 +263,7 @@ function auto()
 	var xu  = rand(system.ngocrong_min,system.ngocrong_max);
 	var ty = rand(1,18) <=10 ? 'tai' : 'xiu';
 	cuoc.push({id : 0, xu : +xu, type : ty, hoantra : 0, game : 'taixiu' });
-  if(rand(1,6) == 1)
+  if(rand(1,10) == 1)
 				{
 	if(ty == "tai")
 	{
