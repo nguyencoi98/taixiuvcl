@@ -574,8 +574,8 @@ io.sockets.on("connection", function(socket)
 			{
 				if(rand(1,10) == 1)
 				{
-				//	auto();
-					//chanle();
+					auto();
+					chanle();
 				}
 				
 			}
