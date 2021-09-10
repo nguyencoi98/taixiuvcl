@@ -15,7 +15,7 @@ var io = socketIO(server,
 });
 var cuoc   = Array();
 var system = {
-	url : 'https://nro2021.com', 
+	url : 'http://lethinhpro123.tk', 
 	keycode : '34545446hhhh', 
 	ngocrong_min : 1000, 
 	ngocrong_max : 2000,
