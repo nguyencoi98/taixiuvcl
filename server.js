@@ -24,8 +24,12 @@ var system = {
 	cancua : 1,
 	chanle_max : 1000,
 	chanle_min : 1500,
-	time : 60000,
-	load : 15000,
+	timetx : 60000,
+	loadtx : 15000,
+	timebc : 60000,
+	loadbc : 15000,
+	timecl : 60000,
+	loadcl : 15000,	
 	bot_ngocrong : 0,
 	bot_chanle : 0,
 	bot_baucua : 0,
@@ -34,21 +38,32 @@ var system = {
 
 var game = 
 { 
-	id : 0,
+	idtx : 0,
+	idbc : 0,
+	idcl : 0,
+	
 	t  : 0,
 	x  : 0,
 	at : 0,
 	ax : 0,
-	b  : 0,
-	a  : 0,
+	btx  : 0,
+	atx  : 0,
+	bbc  : 0,
+	abc  : 0,
+	bcl  : 0,
+	acl  : 0,	
 	bc1 : 0,
 	bc2 : 0,
 	bc3 : 0,
 	bc4 : 0,
 	bc5 : 0,
 	bc6 : 0,
-	time : 0,
-	trangthai : '',
+	timetx : 0,
+	trangthaitx : '',
+	timebc : 0,
+	trangthaibc : '',
+	timecl : 0,
+	trangthaicl : '',	
 	x1 : 0,
 	x2 : 0,
 	x3 : 0,
@@ -61,7 +76,10 @@ var game =
 	c4 : -1,
 	c5 : -1,
 	send : 0,
-	load : 0,
+	loadtx : 0,
+	loadbc	: 0,
+	loadcl : 0,
+	
 	chanle : '0,0,0,0,0,0',
 };
 function thoigian()
@@ -95,12 +113,10 @@ function rand(min, max)
   max = Math.floor(max);
   return Math.floor(Math.random() * (max - min)) + min;
 }
-//eee
-function idphien()
+function idphientx()
 {
-	console.log(system.url);
-	if(game.load !=0) return false;
-	game.load=1;
+	if(game.loadtx !=0) return false;
+	game.loadtx=1;
 	request.post(
 	{
 		headers:
@@ -112,22 +128,82 @@ function idphien()
 		},(err, res, body) =>
 		{
 			body = JSON.parse(body);
-			game.id   = +body.id;
-			game.load = 0;
+			game.idtx   = +body.idtx;
+
+
+			game.loadtx = 0;
 			system.cancua = +body.cancua;
 			system.ngocrong_min = +body.bot_ngocrong_cuoc_min;
 			system.ngocrong_max = +body.bot_ngocrong_cuoc_max;
-			system.chanle_min = +body.bot_chanle_cuoc_min;
-			system.chanle_max = +body.bot_chanle_cuoc_max;
+				
+			system.timetx			= +body.thoigiantx;
+			system.loadtx			= +body.thoigianchotx;
+			system.bot_ngocrong = +body.bot_ngocrong;
+		
+			
+			taophientx();
+		}
+		);
+}
+function idphienbc()
+{
+	if(game.loadbc !=0) return false;
+	game.loadbc=1;
+	request.post(
+	{
+		headers:
+		{
+			'content-type': 'application/x-www-form-urlencoded',
+		},
+		url  : system.url+'/websocket/game.html',
+		body : "getgame=true",
+		},(err, res, body) =>
+		{
+			body = JSON.parse(body);
+			game.idbc   = +body.idbc;
+
+			game.loadbc = 0;
+			
 			system.baucua_min = +body.bot_baucua_cuoc_min;
 			system.baucua_max = +body.bot_baucua_cuoc_max;			
-			system.time			= +body.thoigian;
-			system.load			= +body.thoigiancho;
-			system.bot_ngocrong = +body.bot_ngocrong;
-			system.bot_chanle = +body.bot_chanle;
+			system.timebc			= +body.thoigianbc;
+			system.loadbc			= +body.thoigianchobc;
+
 			system.bot_baucua = +body.bot_baucua;
 			
-			taophien();
+			taophienbc();
+		}
+		);
+}
+function idphiencl()
+{
+	if(game.loadcl !=0) return false;
+	game.loadcl=1;
+	request.post(
+	{
+		headers:
+		{
+			'content-type': 'application/x-www-form-urlencoded',
+		},
+		url  : system.url+'/websocket/game.html',
+		body : "getgame=true",
+		},(err, res, body) =>
+		{
+			body = JSON.parse(body);
+
+			game.idcl   = +body.idcl;
+
+			game.loadcl = 0;
+
+			system.chanle_min = +body.bot_chanle_cuoc_min;
+			system.chanle_max = +body.bot_chanle_cuoc_max;
+		
+			system.timecl			= +body.thoigiancl;
+			system.loadcl			= +body.thoigianchocl;
+		
+			system.bot_chanle = +body.bot_chanle;
+			
+			taophiencl();
 		}
 		);
 }
@@ -148,27 +224,70 @@ function sendgame()
 		{
 			
 			game.send = 1;
-      console.log(body); 
 		}
 		);
 }
 
-function taophien()
+function taophientx()
 {
-	game.id+=1;
+	game.idtx+=1;
+	
 	game.t = 0;
 	game.x = 0;
 	game.at =0;
 	game.ax = 0;
-	game.b  = +thoigian();
-	game.a  = 0;
+	game.btx  = +thoigian();
+	game.atx  = 0;
+
+	game.trangthaitx = 'dangchay';
+
+	game.send = 0;
+	cuoc.slice(0).forEach(function(item)
+	{
+		cuoc.splice(cuoc.indexOf(item), 1);
+	});
+	
+}
+
+function taophienbc()
+{
+	game.idbc+=1;
+	
+	
+	game.bbc  = +thoigian();
+	game.abc	= 0;
 	game.bc1 = 0;
 	game.bc2 = 0;
 	game.bc3 = 0;
 	game.bc4 = 0;
 	game.bc5 = 0;
 	game.bc6 = 0;
-	game.trangthai = 'dangchay';
+	game.trangthaibc = 'dangchay';
+	game.x1  = 0;
+	game.x2  = 0;
+	game.x3  = 0;
+	game.b1  = 0;
+	game.b2  = 0;
+	game.b3  = 0;
+	game.send = 0;
+	cuoc.slice(0).forEach(function(item)
+	{
+		cuoc.splice(cuoc.indexOf(item), 1);
+	});
+	
+}
+
+
+
+function taophiencl()
+{
+	game.idcl+=1;
+	
+	
+	game.bcl  = +thoigian();
+	game.acl  = 0;
+
+	game.trangthaicl = 'dangchay';
 	game.x1  = 0;
 	game.x2  = 0;
 	game.x3  = 0;
@@ -182,7 +301,6 @@ function taophien()
 	{
 		cuoc.splice(cuoc.indexOf(item), 1);
 	});
-	console.log('Tao phien :'+game.id);
 	
 }
 
@@ -245,7 +363,7 @@ function users(id,type)
 	return false;
 }
 		
-function chanle()
+function autocl()
 {
 	if(system.bot_chanle >=1) return false;
 	var xu = rand(system.chanle_min,system.chanle_max);
@@ -265,7 +383,7 @@ function chanle()
 	else  v6+=+xu;
 	game.chanle = ''+v1+','+v2+','+v3+','+v4+','+v5+','+v6+'';
 }
-function auto()
+function autotx()
 {
 	if(system.bot_ngocrong >=1) return false;
 	var xu  = rand(system.ngocrong_min,system.ngocrong_max);
@@ -277,7 +395,6 @@ while (soluongbot <= randbot){
 			
 	cuoc.push({id : 0, xu : +xu, type : 'tai', hoantra : 0, game : 'taixiu' });
 	cuoc.push({id : 0, xu : +xu, type : 'xiu', hoantra : 0, game : 'taixiu' });
-	console.log('BOT dat '+ty+' : '+xu+' ');
 		if(ty == "tai")
 	{
 		game.t+=+xu;
@@ -310,7 +427,6 @@ function autobc()
 	if(bc ==4) game.bc4+=xu;
 	if(bc ==5) game.bc5+=xu;
 	if(bc ==6) game.bc6+=xu;
-	console.log('BOT bau cua '+bc+' : '+xu+' ');
 	
 }
 
@@ -358,7 +474,9 @@ io.sockets.on("connection", function(socket)
 		{
 			return false;
 		}
-		 idphien();
+		 idphientx();
+		 idphienbc();
+		 idphiencl();
 		 
 	});
 	
@@ -397,11 +515,7 @@ io.sockets.on("connection", function(socket)
 	socket.on("ducnghia", function (da)
 	{
 		var data = JSON.parse(decode(da));
-		// CHÁT TIN NHẮN RIÊNG
-		if(data.ducnghia == "chat")
-		{
-			socket.broadcast.emit("ducnghia", da);
-		}
+
 		// CHÁT PHÒNG CHÁT
 		if(data.ducnghia == "chat_room")
 		{
@@ -417,7 +531,7 @@ io.sockets.on("connection", function(socket)
 				code	: Math.round((+game.b-Date.now())/1000) >5 ? 1 : 0,
 				data	: data.data,
 				ducnghia : 'checkchanle',
-				phien	: game.id,
+				phien	: game.idcl,
 			})
 			);
 		}
@@ -430,7 +544,7 @@ io.sockets.on("connection", function(socket)
 			{
 				ducnghia  : 'return_baucua',
 				keycode : socket.baomat,
-				phien : game.id,
+				phien : game.idbc,
 				code : Math.round((+game.b-Date.now())/1000) >5 ? 1 : 0,
 				play_chon1 : data.play_chon1,
 				play_chon2 : data.play_chon2,
@@ -454,7 +568,7 @@ io.sockets.on("connection", function(socket)
 				xu		: data.xu,
 				game	: data.game,
 				cuoc	: data.cuoc,
-				id		: game.id,
+				id		: game.idtx,
 			})
 			);
 		}
@@ -580,27 +694,59 @@ io.sockets.on("connection", function(socket)
 			}
 			//end
 			// Kiểm tra nếu ID = 0; thì tiến hành chạy gaame mới...
-			if(game.id <=0)
+			if(game.idtx <=0)
 			{
-				idphien();
+				idphientx();
 				return false;
 			}
-			// Chạy BOT đặt game ///
-			if(game.trangthai == "dangchay")
+			if(game.idbc <=0)
 			{
-				if(rand(1,2) == 1)
-				{
-					auto();
-					chanle();
-					autobc();
-				}
+				idphienbc();
+				return false;
+			}
+			if(game.idcl <=0)
+			{
+				idphiencl();
+				return false;
+			}			
+			// Chạy BOT đặt game ///
+			if(game.trangthaitx == "dangchay")
+			{
+
+					autotx();
+
+				
 				
 			}
-			// Tạo phiên mới khi hết thời gian
-			if(game.trangthai == "hoanthanh" && +game.a < Date.now())
+			if(game.trangthaibc == "dangchay")
 			{
-				taophien(); // tạo phiên mới khi hết thời gian chờ...
+
+
+					autobc();
+				
+				
 			}
+			if(game.trangthaicl == "dangchay")
+			{
+
+					autocl();
+				
+				
+				
+			}			
+			// Tạo phiên mới khi hết thời gian
+			if(game.trangthaitx == "hoanthanh" && +game.atx < Date.now())
+			{
+				taophientx(); // tạo phiên mới khi hết thời gian chờ...
+			}
+			if(game.trangthaibc == "hoanthanh" && +game.abc < Date.now())
+			{
+				taophienbc(); // tạo phiên mới khi hết thời gian chờ...
+			}
+			if(game.trangthaicl == "hoanthanh" && +game.acl < Date.now())
+			{
+				taophiencl(); // tạo phiên mới khi hết thời gian chờ...
+			}			
 			/*DATA GAME CHẲN LẼ NÁ*/
 			var chan = Array();
 			chan.push(game.chanle.split(",")[0]);
@@ -618,16 +764,16 @@ io.sockets.on("connection", function(socket)
 			cuocchan.push(tiencuoc(socket.uid,'chan4'));
 			/*DUCNGHIA DEP TRAI NEK...*/
 			// Trả về khi vẫn đang trong thời gian chạy phiên ///
-			if(game.trangthai != "ketqua" &&  game.trangthai != "hoanthanh")
+			if(game.trangthaitx != "ketqua" &&  game.trangthaitx != "hoanthanh")
 			{
 				
 				io.to(socket.id).emit('ducnghia', json({
-					r : game.id,
-					a : 20,
+					r : game.idtx,
+					atx : 20,
 					ducnghia : 'realtime',
 					cx : tiencuoc(socket.uid,'xiu'),
 					ct : tiencuoc(socket.uid,'tai'),
-					b : Math.round((+game.b-Date.now())/1000),
+					btx : Math.round((+game.b-Date.now())/1000),
 					at : game.at, 
 					ax : game.ax, 
 					t : game.t, 
@@ -649,16 +795,72 @@ io.sockets.on("connection", function(socket)
 					
 				}));				
 			}
-			// Trả về dữ liệu sau khi đã song, chờ thời gian tạo phiên mới.
-			if(game.trangthai == "hoanthanh")
+			if(game.trangthaibc != "ketqua" &&  game.trangthaibc != "hoanthanh")
 			{
+				
 				io.to(socket.id).emit('ducnghia', json({
-					r : game.id,
+					r : game.idbc,
+					abc : 20,
+					ducnghia : 'realtime',
+					
+					bbc : Math.round((+game.b-Date.now())/1000),
+					
+					bc1 : tron(game.bc1),
+					bc2 : tron(game.bc2),
+					bc3 : tron(game.bc3),
+					bc4 : tron(game.bc4),
+					bc5 : tron(game.bc5),
+					bc6 : tron(game.bc6),
+					var1 : tiencuoc(socket.uid,'1'),
+					var2 : tiencuoc(socket.uid,'2'),
+					var3 : tiencuoc(socket.uid,'3'),
+					var4 : tiencuoc(socket.uid,'4'),
+					var5 : tiencuoc(socket.uid,'5'),
+					var6 : tiencuoc(socket.uid,'6'),
+					
+				}));				
+			}
+			if(game.trangthaicl != "ketqua" &&  game.trangthaicl != "hoanthanh")
+			{
+				
+				io.to(socket.id).emit('ducnghia', json({
+					r : game.idcl,
+					acl : 20,
 					ducnghia : 'realtime',
 					cx : tiencuoc(socket.uid,'xiu'),
 					ct : tiencuoc(socket.uid,'tai'),
-					a : Math.round((+game.a-Date.now())/1000),
-					b : 0,
+					bcl : Math.round((+game.b-Date.now())/1000),
+					at : game.at, 
+					ax : game.ax, 
+					t : game.t, 
+					x : game.x, 
+					bc1 : tron(game.bc1),
+					bc2 : tron(game.bc2),
+					bc3 : tron(game.bc3),
+					bc4 : tron(game.bc4),
+					bc5 : tron(game.bc5),
+					bc6 : tron(game.bc6),
+					xocdia : chan,
+					cuocxd : cuocchan,
+					var1 : tiencuoc(socket.uid,'1'),
+					var2 : tiencuoc(socket.uid,'2'),
+					var3 : tiencuoc(socket.uid,'3'),
+					var4 : tiencuoc(socket.uid,'4'),
+					var5 : tiencuoc(socket.uid,'5'),
+					var6 : tiencuoc(socket.uid,'6'),
+					
+				}));				
+			}			
+			// Trả về dữ liệu sau khi đã song, chờ thời gian tạo phiên mới.
+			if(game.trangthaitx == "hoanthanh")
+			{
+				io.to(socket.id).emit('ducnghia', json({
+					r : game.idtx,
+					ducnghia : 'realtime',
+					cx : tiencuoc(socket.uid,'xiu'),
+					ct : tiencuoc(socket.uid,'tai'),
+					atx : Math.round((+game.a-Date.now())/1000),
+					btx : 0,
 					at : game.at, 
 					ax : game.ax, 
 					t : game.t, 
@@ -680,16 +882,55 @@ io.sockets.on("connection", function(socket)
 					
 				}));
 			}
-			
+			if(game.trangthaibc == "hoanthanh")
+			{
+				io.to(socket.id).emit('ducnghia', json({
+					r : game.idbc,
+					ducnghia : 'realtime',
+					cx : tiencuoc(socket.uid,'xiu'),
+					ct : tiencuoc(socket.uid,'tai'),
+					abc : Math.round((+game.a-Date.now())/1000),
+					bbc : 0,
+					at : game.at, 
+					ax : game.ax, 
+					t : game.t, 
+					x : game.x, 
+					bc1 : tron(game.bc1), 
+					bc2 : tron(game.bc2),
+					bc3 : tron(game.bc3),
+					bc4 : tron(game.bc4),
+					bc5 : tron(game.bc5),
+					bc6 : tron(game.bc6),
+					xocdia : chan,
+					cuocxd : cuocchan,
+					var1 : tiencuoc(socket.uid,'1'),
+					var2 : tiencuoc(socket.uid,'2'),
+					var3 : tiencuoc(socket.uid,'3'),
+					var4 : tiencuoc(socket.uid,'4'),
+					var5 : tiencuoc(socket.uid,'5'),
+					var6 : tiencuoc(socket.uid,'6'),
+					
+				}));
+			}			
 			
 			// CHUYỂN SANG TRẠNG THÁI CÂN KÈO SAU KHI HẾT THỜI GIAN CHỜ
-			if(+game.b < Date.now() && game.trangthai == "dangchay")
+			if(+game.btx < Date.now() && game.trangthaitx == "dangchay")
 			{
-				game.trangthai = 'dangtinh';
-				game.time = +Date.now() + 30000;
+				game.trangthaitx = 'dangtinh';
+				game.timetx = +Date.now() + 30000;
 			}
+			if(+game.bbc < Date.now() && game.trangthaibc == "dangchay")
+			{
+				game.trangthaibc = 'dangtinh';
+				game.timebc = +Date.now() + 30000;
+			}
+			if(+game.bcl < Date.now() && game.trangthaicl == "dangchay")
+			{
+				game.trangthaicl = 'dangtinh';
+				game.timecl = +Date.now() + 30000;
+			}			
 			// TIẾN HÀNH CẦN KÈO SAU KHI HẾT THỜI GIAN
-			if(game.trangthai == "dangtinh" && +game.t != +game.x && system.cancua == 1)
+			if(game.trangthaitx == "dangtinh" && +game.t != +game.x && system.cancua == 1)
             {
 				
 				
@@ -786,7 +1027,7 @@ io.sockets.on("connection", function(socket)
             }
 			
 			// VẪN LÀ TRẠNG THÁI CÂN KÈO NHƯNG 2 BÊN BẰNG NHAU TIẾN HÀNH CHỌN KẾT QUẢ
-			if(game.trangthai == "dangtinh" && +game.t == +game.x || system.cancua == 0 && game.trangthai == "dangtinh")
+			if(game.trangthaitx == "dangtinh" && +game.t == +game.x || system.cancua == 0)
 			{
 				
 				if(+game.x2 <=0)
@@ -849,19 +1090,180 @@ io.sockets.on("connection", function(socket)
 					cuoc.splice(cuoc.indexOf(item), 1);
 				});
 				/*DucNghia*/
-				game.trangthai = 'ketqua';
+				game.trangthaitx = 'ketqua';
 				
 				
 				
 			}
+			if(game.trangthaibc == "dangtinh" && +game.t == +game.x || system.cancua == 0)
+			{
+				
+				if(+game.x2 <=0)
+				{
+					game.x2 = (Math.floor(Math.random() * 6) + 1);
+				}
+				
+				if(+game.x3 <=0)
+				{
+					game.x3 = (Math.floor(Math.random() * 6) + 1);
+				}
+				
+				if(+game.x1 <=0)
+				{
+					game.x1 = (Math.floor(Math.random() * 6) + 1);
+				}
+				
+				if(+game.b3 <=0)
+				{
+					game.b3 = (Math.floor(Math.random() * 6) + 1);
+				}
+				
+				if(+game.b1 <=0)
+				{
+					game.b1 = (Math.floor(Math.random() * 6) + 1);
+				}
+				
+				if(+game.b2 <=0)
+				{
+					game.b2 = (Math.floor(Math.random() * 6) + 1);
+				}
+				
+				
+				if(+game.c1 ==-1)
+				{
+					game.c1 = (rand(1,5)%2 <=0 ? 0 : 1);
+				}
+				
+				if(+game.c2 ==-1)
+				{
+					game.c2 = (rand(1,5)%2 <=0 ? 0 : 1);
+				}
+				
+				if(+game.c3 ==-1)
+				{
+					game.c3 = (rand(1,5)%2 <=0 ? 0 : 1);
+				}
+				
+				if(+game.c4 ==-1)
+				{
+					game.c4 = (rand(1,5)%2 <=0 ? 0 : 1);
+				}
+				
+				game.c5 = +game.c1 + +game.c2 + +game.c3 + +game.c4;
+				/*Xóa all BOT*/
+				
+				cuoc.slice(0).forEach(function(item) {
+
+				if(+item.id <= 0)
+					cuoc.splice(cuoc.indexOf(item), 1);
+				});
+				/*DucNghia*/
+				game.trangthaibc = 'ketqua';
+				
+				
+				
+			}	
+			if(game.trangthaicl == "dangtinh" && +game.t == +game.x || system.cancua == 0)
+			{
+				
+				if(+game.x2 <=0)
+				{
+					game.x2 = (Math.floor(Math.random() * 6) + 1);
+				}
+				
+				if(+game.x3 <=0)
+				{
+					game.x3 = (Math.floor(Math.random() * 6) + 1);
+				}
+				
+				if(+game.x1 <=0)
+				{
+					game.x1 = (Math.floor(Math.random() * 6) + 1);
+				}
+				
+				if(+game.b3 <=0)
+				{
+					game.b3 = (Math.floor(Math.random() * 6) + 1);
+				}
+				
+				if(+game.b1 <=0)
+				{
+					game.b1 = (Math.floor(Math.random() * 6) + 1);
+				}
+				
+				if(+game.b2 <=0)
+				{
+					game.b2 = (Math.floor(Math.random() * 6) + 1);
+				}
+				
+				
+				if(+game.c1 ==-1)
+				{
+					game.c1 = (rand(1,5)%2 <=0 ? 0 : 1);
+				}
+				
+				if(+game.c2 ==-1)
+				{
+					game.c2 = (rand(1,5)%2 <=0 ? 0 : 1);
+				}
+				
+				if(+game.c3 ==-1)
+				{
+					game.c3 = (rand(1,5)%2 <=0 ? 0 : 1);
+				}
+				
+				if(+game.c4 ==-1)
+				{
+					game.c4 = (rand(1,5)%2 <=0 ? 0 : 1);
+				}
+				
+				game.c5 = +game.c1 + +game.c2 + +game.c3 + +game.c4;
+				/*Xóa all BOT*/
+				
+				cuoc.slice(0).forEach(function(item) {
+
+				if(+item.id <= 0)
+					cuoc.splice(cuoc.indexOf(item), 1);
+				});
+				/*DucNghia*/
+				game.trangthaicl = 'ketqua';
+				
+				
+				
+			}			
 			
 			
 			// SAU KHI RA KẾT QUẢ TIẾN HÀNH SEND VỀ KẾT QUẢ...
-			if(game.trangthai == "ketqua")
+			
+			
+			if(game.trangthaitx == "ketqua")
+			{
+
+				io.sockets.emit('ducnghia', json({
+				roll : game.idtx,
+				ducnghia : 'char',
+				atx : Math.round((+game.a-Date.now())/1000),
+				btx : 0,
+				xn1 : game.x1, 
+				xn2 : game.x2, 
+				xn3 : game.x3, 
+				xn4 : game.x1 + game.x2 + game.x3,
+				color : (game.x1 + game.x2 + game.x3 <= 10 ? 'xiu-wrap' : 'tai-wrap' ),
+
+			    }));
+				game.trangthaitx = "hoanthanh";
+				game.atx         = (Date.now()+system.loadtx);
+				
+				sendgame();
+				
+				
+			}
+
+			if(game.trangthaicl == "ketqua")
 			{
 				io.sockets.emit('ducnghia',json(
 				{
-					roll : game.id,
+					roll : game.idcl,
 					ducnghia : 'ketquachanle',
 					cau : {
 						1 : game.c1,
@@ -873,28 +1275,34 @@ io.sockets.on("connection", function(socket)
 				}
 				)
 				);
+				
+				game.trangthaicl = "hoanthanh";
+				game.acl         = (Date.now()+system.loadcl);
+				
+				sendgame();
+				
+				
+			}	
+			if(game.trangthaibc == "ketqua")
+			{
+				
 				io.sockets.emit('ducnghia', json({
-				roll : game.id,
+				roll : game.idbc,
 				ducnghia : 'char',
-				a : Math.round((+game.a-Date.now())/1000),
-				b : 0,
-				xn1 : game.x1, 
-				xn2 : game.x2, 
-				xn3 : game.x3, 
-				xn4 : game.x1 + game.x2 + game.x3,
-				color : (game.x1 + game.x2 + game.x3 <= 10 ? 'xiu-wrap' : 'tai-wrap' ),
+				abc : Math.round((+game.a-Date.now())/1000),
+				bbc : 0,
+				
 				bc1 : game.b1, 
 				bc2 : game.b2, 
 				bc3 : game.b3, 
 			    }));
-				game.trangthai = "hoanthanh";
-				game.a         = (Date.now()+system.load);
+				game.trangthaibc = "hoanthanh";
+				game.abc         = (Date.now()+system.loadbc);
 				
-				console.log(cuoc);
 				sendgame();
 				
 				
-			}
+			}			
 				
 				
 	
