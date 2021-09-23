@@ -15,7 +15,7 @@ var io = socketIO(server,
 });
 var cuoc   = Array();
 var system = {
-	url : 'https://nro2021.com', 
+	url : 'https://game.ngocrongonline.club', 
 	keycode : '123456', 
 	ngocrong_min : 1000, 
 	ngocrong_max : 2000,
@@ -579,10 +579,11 @@ io.sockets.on("connection", function(socket)
 			// Chạy BOT đặt game ///
 			if(game.trangthai == "dangchay")
 			{
-				if(rand(1,2) == 1)
+				if(rand(1,1) == 1)
 				{
 					auto();
 					chanle();
+					autobc();
 				}
 				
 			}
