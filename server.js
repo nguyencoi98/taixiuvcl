@@ -588,7 +588,7 @@ io.sockets.on("connection", function(socket)
 			// Chạy BOT đặt game ///
 			if(game.trangthai == "dangchay")
 			{
-				if(rand(1,1) == 1)
+				if(rand(1,2) == 1)
 				{
 					auto();
 					chanle();
