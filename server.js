@@ -15,17 +15,21 @@ var io = socketIO(server,
 });
 var cuoc   = Array();
 var system = {
-	url : 'https://nro2021.com', 
+	url : 'https://game.ngocrongonline.club', 
 	keycode : '123456', 
 	ngocrong_min : 1000, 
 	ngocrong_max : 2000,
-	bot_chanle : 0,
+	baucua_min : 1000, 
+	baucua_max : 2000, 	
 	cancua : 1,
 	chanle_max : 1000,
 	chanle_min : 1500,
 	time : 60000,
 	load : 15000,
 	bot_ngocrong : 0,
+	bot_chanle : 0,
+	bot_baucua : 0,
+
 	};
 
 var game = 
@@ -115,10 +119,14 @@ function idphien()
 			system.ngocrong_max = +body.bot_ngocrong_cuoc_max;
 			system.chanle_min = +body.bot_chanle_cuoc_min;
 			system.chanle_max = +body.bot_chanle_cuoc_max;
+			system.baucua_min = +body.bot_baucua_cuoc_min;
+			system.baucua_max = +body.bot_baucua_cuoc_max;			
 			system.time			= +body.thoigian;
 			system.load			= +body.thoigiancho;
 			system.bot_ngocrong = +body.bot_ngocrong;
 			system.bot_chanle = +body.bot_chanle;
+			system.bot_baucua = +body.bot_baucua;
+			
 			taophien();
 		}
 		);
@@ -262,7 +270,7 @@ function auto()
 	if(system.bot_ngocrong >=1) return false;
 	var xu  = rand(system.ngocrong_min,system.ngocrong_max);
 	var ty = rand(1,18) <=10 ? 'tai' : 'xiu';
-	var randbot = rand(1,2);
+	var randbot = rand(1,5);
 
 var soluongbot = 1;
 while (soluongbot <= randbot){
@@ -293,7 +301,8 @@ while (soluongbot <= randbot){
 }
 function autobc()
 {
-	var xu  = rand(10000,200000);
+	if(system.bot_baucua >=1) return false;
+	var xu  = rand(system.baucua_min,system.baucua_max);
 	var bc  = rand(1,6);
 	if(bc ==1) game.bc1+=xu;
 	if(bc ==2) game.bc2+=xu;
@@ -579,7 +588,7 @@ io.sockets.on("connection", function(socket)
 			// Chạy BOT đặt game ///
 			if(game.trangthai == "dangchay")
 			{
-				if(rand(1,2) == 1)
+				if(rand(1,1) == 1)
 				{
 					auto();
 					chanle();
