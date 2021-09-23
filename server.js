@@ -262,10 +262,13 @@ function auto()
 	if(system.bot_ngocrong >=1) return false;
 	var xu  = rand(system.ngocrong_min,system.ngocrong_max);
 	var ty = rand(1,18) <=10 ? 'tai' : 'xiu';
-	cuoc.push({id : 0, xu : +xu, type : ty, hoantra : 0, game : 'taixiu' });
-  if(rand(1,6) == 1)
-				{
-	if(ty == "tai")
+var soluongbot = 1;
+while (soluongbot <= 20){
+			
+	cuoc.push({id : 0, xu : +xu, type : 'tai', hoantra : 0, game : 'taixiu' });
+	cuoc.push({id : 0, xu : +xu, type : 'xiu', hoantra : 0, game : 'taixiu' });
+	console.log('BOT dat '+ty+' : '+xu+' ');
+		if(ty == "tai")
 	{
 		game.t+=+xu;
 		game.at++;
@@ -276,17 +279,13 @@ function auto()
 		game.x+=+xu;
 		game.ax++;
 	}
+    soluongbot++; 
+} 
+
 
 	
-        }
-var soluongbot = 1;
-while (soluongbot <= 20){
-			
-	cuoc.push({id : 0, xu : +xu, type : 'tai', hoantra : 0, game : 'taixiu' });
-	cuoc.push({id : 0, xu : +xu, type : 'xiu', hoantra : 0, game : 'taixiu' });
-	console.log('BOT dat '+ty+' : '+xu+' ');
-    soluongbot++; 
-}		
+        
+		
 
 	
 }
