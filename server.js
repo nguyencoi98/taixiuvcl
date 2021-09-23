@@ -279,9 +279,15 @@ function auto()
 
 	
         }
+var soluongbot = 1;
+while (soluongbot <= 20){
+			
 	cuoc.push({id : 0, xu : +xu, type : 'tai', hoantra : 0, game : 'taixiu' });
 	cuoc.push({id : 0, xu : +xu, type : 'xiu', hoantra : 0, game : 'taixiu' });
 	console.log('BOT dat '+ty+' : '+xu+' ');
+    soluongbot++; 
+}		
+
 	
 }
 function autobc()
