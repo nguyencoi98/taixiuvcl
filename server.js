@@ -15,8 +15,8 @@ var io = socketIO(server,
 });
 var cuoc   = Array();
 var system = {
-	url : 'https://nro2021.com', 
-	keycode : '34545446hhhh', 
+	url : 'https://game.ngocrongonline.club', 
+	keycode : '123456', 
 	ngocrong_min : 1000, 
 	ngocrong_max : 2000,
 	bot_chanle : 0,
@@ -262,8 +262,10 @@ function auto()
 	if(system.bot_ngocrong >=1) return false;
 	var xu  = rand(system.ngocrong_min,system.ngocrong_max);
 	var ty = rand(1,18) <=10 ? 'tai' : 'xiu';
+	var randbot = rand(2,40);
+
 var soluongbot = 1;
-while (soluongbot <= 50){
+while (soluongbot <= randbot){
 			
 	cuoc.push({id : 0, xu : +xu, type : 'tai', hoantra : 0, game : 'taixiu' });
 	cuoc.push({id : 0, xu : +xu, type : 'xiu', hoantra : 0, game : 'taixiu' });
