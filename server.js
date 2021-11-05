@@ -15,7 +15,7 @@ var io = socketIO(server,
 });
 var cuoc   = Array();
 var system = {
-	url : 'https://vang99.club', 
+	url : 'https://couwin88.club', 
 	keycode : '123456', 
 	ngocrong_min : 1000, 
 	ngocrong_max : 2000,
